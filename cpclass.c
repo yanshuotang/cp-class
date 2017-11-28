@@ -1,15 +1,10 @@
 //
 // Created by yanshuotang on 17/10/19.
 //
-
 #include <stdlib.h>
-#include <memory.h>
 #include "cpclass.h"
 #include "endian_swap/endian_swap.h"
 #include "class_files/constant/class_constants.h"
-#include "common/common_type.h"
-#include <wchar.h>
-#include <locale.h>
 
 CLASSFILE* class_open(const char *path){
     CLASSFILE* classfile;
@@ -19,7 +14,6 @@ CLASSFILE* class_open(const char *path){
         printf("申请内存空间出错!\n");
         return NULL;
     }
-//    printf("magic=%x\n",classfile->aClass->magic);
 
     if((classfile->fp = fopen(path,"rb")) == NULL){
         printf("打开%s出错!\n",path);
@@ -48,7 +42,6 @@ int class_parse(CLASSFILE* classfile){
     }
     data[file_len]='\0';
     fread(data,file_len,1,classfile->fp);
-    //关闭文件
     fclose(classfile->fp);
 
     classfile->aClass = malloc(sizeof(CLASS));

@@ -5,7 +5,7 @@
 
 
 int main(){
-    char* path = "/Users/shangyanshuo/Documents/generation/2017/codes/javaDemos/Test.class";
+    char* path = "/Users/xxx/Documents/generation/2017/codes/javaDemos/Test.class";
     CLASSFILE* classfile;
     if((classfile = class_open(path)) == NULL){
         printf("error when open file!");
