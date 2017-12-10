@@ -99,7 +99,7 @@ CLASSFILE* class_open(const char *path);
 int class_parse(CLASSFILE* classfile);
 
 
-int do_parse(CLASSFILE* classfile,char *data);
+int do_parse(CLASSFILE* classfile,unsigned char *data);
 
 
 

@@ -2,7 +2,10 @@
 // Created by yanshuotang on 17/11/15.
 //
 
+#include <string.h>
 #include "utf_8_tools.h"
+#include "../../common/common_type.h"
+
 /**
  * 返回字节position位的二进制值
  * position为0~7位，左高位右低位
@@ -32,6 +35,31 @@ unsigned int trans_two_byte(unsigned char* bytes){
     return result;
 
 }
+
+/**
+ * UTF-8 code to unicode
+ * @param byte1
+ * @param byte2
+ * @return
+ */
+wchar_t trans_two_bytes_wchar(u1 byte1, u1 byte2){
+    wchar_t result = 0x0;
+    result = ((byte1 & 0x1f) << 6) + (byte2 & 0x3f);
+    return result;
+}
+
+wchar_t trans_three_bytes_wchar(u1 byte1,u1 byte2, u1 byte3){
+    wchar_t result = 0x0;
+    result = ((byte1 & 0xf) << 12) + ((byte2 & 0x3f) << 6 ) + (byte3 & 0x3f);
+    return result;
+}
+
+wchar_t trans_six_bytes_wchar(u1 byte1,u1 byte2, u1 byte3, u1 byte4, u1 byte5, u1 byte6){
+    wchar_t result = 0x0;
+    result = 0x10000 + ((byte2 & 0x0f << 16) + ((byte3 & 0x3f) << 10) + (byte5 & 0x0f) << 6) + (byte6 & 0x3f);
+    return result;
+}
+
 
 unsigned int trans_three_byte(unsigned char* bytes){
     unsigned int result = 0;
@@ -83,6 +111,7 @@ unsigned int trans_six_bytes(unsigned char* bytes){
 
 
 int get_utf_8_width(unsigned char byte){
+    printf("byte:%x\n",byte);
     int bit_val = -1;
     // 0开头的则位1个字节宽的的UTF8
     bit_val = byte_position_bit(byte,7);
@@ -115,16 +144,18 @@ int get_utf_8_width(unsigned char byte){
 
 }
 
-int get_unicode_count(unsigned char * bytes,int bytes_count){
+int get_unicode_count(const unsigned char * bytes,int bytes_count){
     int unicode_count = 0;
     int bytes_position = 0;
     unsigned char ch = 0;
     int width = 0;
     redo:
+    if(bytes_position +1 > bytes_count)
+        goto end;
     ch = bytes[bytes_position];
     width = get_utf_8_width(ch);
     if(0 >= width){
-        return width;
+        goto end;
     }
     unicode_count++;
     bytes_count -= width;
@@ -132,10 +163,70 @@ int get_unicode_count(unsigned char * bytes,int bytes_count){
         bytes_position += width;
         goto redo;
     }
+    end:
     return unicode_count;
 }
 
-int getUnicodes(unsigned char * bytes,int bytes_count, unsigned int* unicodes){
+
+int get_unicode_by_wchar(const unsigned char bytes[], int bytes_count, wchar_t wchars[]){
+
+    unsigned char bytes_copy[bytes_count];
+    memset(bytes_copy,0,bytes_count);
+    for(int i=0; i<bytes_count; i++){
+        bytes_copy[i] = bytes[i];
+    }
+
+    int bytes_position = 0;
+    int width = 0;
+    int unicode_i = 0;
+    unsigned char ch = 0;
+
+    while (bytes_position < bytes_count){
+        ch = bytes_copy[bytes_position];
+        width = get_utf_8_width(ch);
+        switch (width){
+            case 1:
+                wchars[unicode_i] = bytes_copy[bytes_position];
+                unicode_i++;
+                bytes_position++;
+                break;
+            case 2:
+//                wchars[unicode_i] = trans_two_byte(bytes_copy);
+                wchars[unicode_i] = trans_two_bytes_wchar(bytes_copy[bytes_position],bytes_copy[bytes_position+1]);
+                unicode_i++;
+                bytes_position+=2;
+                break;
+            case 3:
+                wchars[unicode_i] = trans_three_bytes_wchar(bytes_copy[bytes_position],bytes_copy[bytes_position+1],
+                                                          bytes_copy[bytes_position+2]);
+                unicode_i++;
+                bytes_position+=3;
+                break;
+            case 6:
+                wchars[unicode_i] = trans_six_bytes_wchar(bytes_copy[bytes_position],bytes_copy[bytes_position+1],
+                        bytes_copy[bytes_position+2],bytes_copy[bytes_position+3],bytes_copy[bytes_position+4],
+                        bytes_copy[bytes_position+5]);
+                unicode_i++;
+                bytes_position+=6;
+                break;
+            default:
+                printf("wrong utf-8 width:%d\n",width);
+                return -1;
+        }
+    }
+
+
+    return 0;
+}
+
+int getUnicodes(const unsigned char * bytes,int bytes_count, unsigned int* unicodes){
+
+    unsigned char* bytes_copy = (unsigned char*)malloc(bytes_count);
+    memset(bytes_copy,0,bytes_count);
+    for(int i=0; i<bytes_count; i++){
+        bytes_copy[i] = bytes[i];
+    }
+
     int bytes_position = 0;
     int width = 0;
     int unicode_i = 0;
@@ -145,37 +236,44 @@ int getUnicodes(unsigned char * bytes,int bytes_count, unsigned int* unicodes){
     if(bytes_position+1 > bytes_count){
         goto end;
     }
-    ch = bytes[bytes_position];
-    width = get_utf_8_width(ch);
+//    ch = bytes_copy[bytes_position];
+//    ch = *(unsigned char*)bytes_copy;
+    ch = bytes_copy[0];
+
+    width = get_utf_8_width(ch);    // break point here,look the ch is the right code.
+    // so i think the problem may be caused in parse utf-8 constant.
     switch (width){
         case 1:
-            unicodes[unicode_i] = *(unsigned char*)bytes;
+//            unicodes[unicode_i] = *(unsigned char*)bytes_copy;
+            unicodes[unicode_i] = bytes_copy[0];
             unicode_i++;
             bytes_position++;
-            bytes++;
+            bytes_copy++;
             goto redo;
         case 2:
-            unicodes[unicode_i] = trans_two_byte(bytes);
+            unicodes[unicode_i] = trans_two_byte(bytes_copy);
             unicode_i++;
             bytes_position += 2;
-            bytes += 2;
+            bytes_copy += 2;
             goto redo;
         case 3:
-            unicodes[unicode_i] = trans_three_byte(bytes);
+            unicodes[unicode_i] = trans_three_byte(bytes_copy);
             unicode_i++;
             bytes_position += 3;
-            bytes += 3;
+            bytes_copy += 3;
             goto redo;
         case 6:
-            unicodes[unicode_i] = trans_six_bytes(bytes);
+            unicodes[unicode_i] = trans_six_bytes(bytes_copy);
             unicode_i++;
             bytes_position += 6;
-            bytes += 6;
+            bytes_copy += 6;
             goto redo;
         default:
+            printf("wrong utf-8 width:%d\n",width);
             return -1;
     }
 
     end:
+//    free(bytes_copy);
     return 0;
 }
