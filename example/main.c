@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "endian_swap/endian_swap.h"
-#include "class_files/constant/class_constants.h"
+#include "../src/endian_swap/endian_swap.h"
+#include "../src/class_files/constant/class_constants.h"
 
 
 int main(){
