@@ -6,7 +6,6 @@
 #include "cpclass.h"
 #include "endian_swap/endian_swap.h"
 #include "class_files/constant/class_constants.h"
-#include "common/common_type.h"
 
 CLASSFILE* class_open(const char *path){
     CLASSFILE* classfile;
