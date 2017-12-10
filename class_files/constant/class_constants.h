@@ -48,10 +48,6 @@ typedef struct {
     u4 low_bytes;
 }CONSTANT_Long_info;
 
-//typedef struct {
-//    u1 tag;
-//    u8 bytes;
-//}CONSTANT_Long_info;
 
 typedef struct {
     u1 tag;
@@ -59,10 +55,6 @@ typedef struct {
     u4 low_bytes;
 }CONSTANT_Double_info;
 
-//typedef struct {
-//    u1 tag;
-//    u8 bytes;
-//}CONSTANT_Double_info;
 
 typedef struct {
     u1 tag;
