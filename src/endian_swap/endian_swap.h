@@ -4,7 +4,7 @@
 
 #ifndef CP_CLASS_ENDIAN_SWAP_H
 #define CP_CLASS_ENDIAN_SWAP_H
-#include "../cpclass.h"
+#include "../cp_class/cpclass.h"
 
 u2 swap_u2(u2 x);
 u4 swap_u4(u4 x);

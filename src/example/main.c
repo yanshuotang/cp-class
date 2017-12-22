@@ -1,14 +1,13 @@
 #include <stdio.h>
 
-#include "../src/endian_swap/endian_swap.h"
-#include "../src/class_files/constant/class_constants.h"
+#include "endian_swap.h"
+#include "class_constants.h"
 
 
 int main(){
-    char* ubuntu_path = "/home/kingjava/dev/workspaces/cppspaces/sp1/cp-class/Test.class";
-    char* path = "/Users/shangyanshuo/Documents/generation/2017/codes/javaDemos/Test.class";
+    char* ubuntu_path = "/home/yanshuotang/dev/workspaces/cppspaces/sp1/cp-class/Test.class";
     CLASSFILE* classfile;
-    if((classfile = class_open(path)) == NULL){
+    if((classfile = class_open(ubuntu_path)) == NULL){
         printf("error when open file!");
         return -1;
     }

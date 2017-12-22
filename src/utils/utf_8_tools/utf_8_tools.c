@@ -4,7 +4,6 @@
 
 #include <string.h>
 #include "utf_8_tools.h"
-#include "../../common/common_type.h"
 
 /**
  * 返回字节position位的二进制值

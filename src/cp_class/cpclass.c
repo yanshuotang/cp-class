@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "cpclass.h"
-#include "endian_swap/endian_swap.h"
-#include "class_files/constant/class_constants.h"
+#include "../endian_swap/endian_swap.h"
+#include "../class_files/constant/class_constants.h"
 
 CLASSFILE* class_open(const char *path){
     CLASSFILE* classfile;

@@ -6,8 +6,8 @@
 #define CP_CLASS_CPCLASS_H
 
 #include <stdio.h>
-#include "common/common_type.h"
-#include "utils/utf_8_tools/utf_8_tools.h"
+#include "../common/common_type.h"
+#include "../utils/utf_8_tools/utf_8_tools.h"
 
 
 #define JAVA_CLASSFILE_MAGIC              0xCAFEBABE
