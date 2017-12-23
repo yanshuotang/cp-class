@@ -26,5 +26,8 @@ make sure you have edit the class file in right path.
 注意，这时候如果报未找到class文件请编辑示例代码的class文件所在目录。  
 cp-class/src/exmple/main.c/main::ubuntu_path  
 
+# CONTACT ME
+email:gensa@163.com  
+
 ## LICENSE
 [BSD](LICENSE)
